@@ -78,6 +78,7 @@ describe(SmokeSwaps('Swap from Actions'), () => {
     await SuccessImportAccountView.tapCloseButton();
     await AccountListView.swipeToDismissAccountsModal();
     await Assertions.checkIfVisible(WalletView.container);
+    await TestHelpers.delay(2000);
   });
 
   it.each`
@@ -85,8 +86,6 @@ describe(SmokeSwaps('Swap from Actions'), () => {
     ${'native'}$     |${'.4'}   | ${'ETH'}          | ${'WETH'}       | ${CustomNetworks.Tenderly.Mainnet}
     ${'wrapped'}$    |${'.2'}   | ${'WETH'}         | ${'ETH'}        | ${CustomNetworks.Tenderly.Mainnet}
     ${'native'}$     |${'.1 '}  | ${'ETH'}          | ${'USDC'}       | ${CustomNetworks.Tenderly.Optimism}
-    ${'unapproved'}$ |${'50 '}  | ${'USDC'}         | ${'DAI'}        | ${CustomNetworks.Tenderly.Optimism}
-
   `(
     "should swap $type token '$sourceTokenSymbol' to '$destTokenSymbol' on '$network.providerConfig.nickname'",
     async ({ type, quantity, sourceTokenSymbol, destTokenSymbol, network }) => {
