@@ -87,20 +87,18 @@ describe(Regression('Multiple Swaps from Actions'), () => {
   `(
     "should swap $type token '$sourceTokenSymbol' to '$destTokenSymbol' on '$network.providerConfig.nickname'",
     async ({ type, quantity, sourceTokenSymbol, destTokenSymbol, network }) => {
-      await TabBarComponent.tapWallet();
-      await WalletView.tapNetworksButtonOnNavBar();
-      await TestHelpers.delay(2000);
 
       if (network.providerConfig.nickname !== currentNetwork)
       {
+        await TabBarComponent.tapWallet();
+        await WalletView.tapNetworksButtonOnNavBar();
         await Assertions.checkIfToggleIsOn(NetworkListModal.testNetToggle);
         await NetworkListModal.changeNetworkTo(network.providerConfig.nickname, false);
         await NetworkEducationModal.tapGotItButton();
         await TestHelpers.delay(3000);
         currentNetwork = network.providerConfig.nickname;
-      } else {
-        await NetworkListModal.changeNetworkTo(network.providerConfig.nickname, false);
       }
+
       await Assertions.checkIfVisible(WalletView.container);
       await TabBarComponent.tapActions();
       await TestHelpers.delay(1000);
@@ -148,7 +146,7 @@ describe(Regression('Multiple Swaps from Actions'), () => {
       //Wait for Swap to complete
       await SwapView.swapCompleteLabel(sourceTokenSymbol, destTokenSymbol);
       await device.enableSynchronization();
-      await TestHelpers.delay(5000);
+      await TestHelpers.delay(10000);
 
       // Check the swap activity completed
       await TabBarComponent.tapActivity();
@@ -158,13 +156,20 @@ describe(Regression('Multiple Swaps from Actions'), () => {
       );
       await Assertions.checkIfElementToHaveText(ActivitiesView.firstTransactionStatus, ActivitiesViewSelectorsText.CONFIRM_TEXT, 60000);
 
-      // Check the tokeb approval completed
+      // Check the token approval completed
       if (type === 'unapproved') {
         await Assertions.checkIfVisible(
           ActivitiesView.tokenApprovalActivity(sourceTokenSymbol),
         );
         await Assertions.checkIfElementToHaveText(ActivitiesView.secondTransactionStatus, ActivitiesViewSelectorsText.CONFIRM_TEXT, 60000);
       }
+
+      await TabBarComponent.tapWallet();
+      await WalletView.tapIdenticon();
+      await Assertions.checkIfVisible(AccountListView.accountList);
+      // THis is need to update the token balance
+      await AccountListView.tapToSelectActiveAccountAtIndex(1);
+
     },
   );
 });
